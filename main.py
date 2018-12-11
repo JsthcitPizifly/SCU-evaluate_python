@@ -6,7 +6,6 @@ import json
 import time
 
 importlib.reload(sys)
-url = 'http://zhjw.scu.edu.cn/login'
 pg_url = 'http://zhjw.scu.edu.cn/student/teachingEvaluation/teachingEvaluation'
 
 def teach_evaluate(usr, psw, text):
