@@ -58,4 +58,4 @@ def teach_evaluate(usr, psw, text):
 usr = input("学号:")
 psw = input("密码:")
 text = input("评估内容(请用英文):")
-print(teach_evaluate('2017141494032', '693926a', text))
+print(teach_evaluate(usr, psw, text))
