@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import importlib
 import json
 import time
+import getpass
 
 importlib.reload(sys)
 pg_url = 'http://zhjw.scu.edu.cn/student/teachingEvaluation/teachingEvaluation'
@@ -55,6 +56,6 @@ def teach_evaluate(usr, psw, text):
 	return '评教结束'
 	
 usr = input("学号:")
-psw = input("密码:")
+psw = getpass.getpass("密码:")
 text = input("评估内容:")
 print(teach_evaluate(usr, psw, text))
