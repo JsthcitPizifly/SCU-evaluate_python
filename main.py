@@ -8,7 +8,7 @@ import getpass
 
 importlib.reload(sys)
 pg_url = 'http://zhjw.scu.edu.cn/student/teachingEvaluation/teachingEvaluation'
-
+url = 'http://zhjw.scu.edu.cn/login'
 def teach_evaluate(usr, psw, text):
 	s = requests.Session()
 	res = requests.get(url)
@@ -19,7 +19,7 @@ def teach_evaluate(usr, psw, text):
 	r = s.post('http://zhjw.scu.edu.cn/j_spring_security_check', login_data)
 	
 	if r.status_code == 200:
-		print("login sucess")
+		print("login success")
 	res = s.get(pg_url + '/search')
 	r = json.loads(res.text)
 	headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'}
@@ -47,11 +47,12 @@ def teach_evaluate(usr, psw, text):
 				if tmpstr_in not in params_post.keys():
 					params_post[tmpstr_in] = item_in.attrs["value"]
 			params_post['zgpj'] = text
-			respon = s.post(pg_url + '/evaluation', params_post, headers)	
+			respon = s.post(pg_url + '/evaluation', params_post, headers)
 			if 'fail' in respon.text :
 				print(get_token['evaluatedPeople'] + ' 评教失败')
-			if 'sucess' in respon.text :
+			if 'success' in respon.text :
 				print(get_token['evaluatedPeople'] +  ' 评教成功')
+
 			
 	return '评教结束'
 	
