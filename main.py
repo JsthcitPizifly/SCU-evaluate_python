@@ -5,24 +5,39 @@ import importlib
 import json
 import time
 import getpass
+import urllib
+
+headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'}
 
 importlib.reload(sys)
 pg_url = 'http://zhjw.scu.edu.cn/student/teachingEvaluation/teachingEvaluation'
 url = 'http://zhjw.scu.edu.cn/login'
+img_url = 'http://zhjw.scu.edu.cn/img/captcha.jpg'
+login_url = 'http://zhjw.scu.edu.cn/j_spring_security_check'
+local = 'now.jpg'
 def teach_evaluate(usr, psw, text):
+	
 	s = requests.Session()
-	res = requests.get(url)
-	
-	cook = res.headers["Set-Cookie"][11:-8]
-	
-	login_data = {'j_username':usr, 'j_password':psw,'j_captcha1': "error", 'JSSESSIONID':cook}
-	r = s.post('http://zhjw.scu.edu.cn/j_spring_security_check', login_data)
-	
+ 	# res = requests.get(url)
+	rsp = s.get(img_url)
+	img = rsp.content
+	with open(local, 'wb') as f:
+		f.write(img)
+	cook = rsp.headers["Set-Cookie"][11:-8]
+	# cook = res.headers["Set-Cookie"][11:-8]
+	print(cook)
+	cap = input("验证码:")
+	login_data = {'j_username':usr, 'j_password':psw,'j_captcha': cap, 'JSSESSIONID':cook}
+	r = s.post(login_url, login_data, headers = headers)
 	if r.status_code == 200:
 		print("login success")
+	else :
+		print("login failed")
+		exit(0)
+	
 	res = s.get(pg_url + '/search')
-	r = json.loads(res.text)
-	headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'}
+
+	# r = json.loads(res.text)
 	
 	for item in r['data']:
 		params_post = dict()
@@ -52,7 +67,7 @@ def teach_evaluate(usr, psw, text):
 				print(get_token['evaluatedPeople'] + ' 评教失败')
 			if 'success' in respon.text :
 				print(get_token['evaluatedPeople'] +  ' 评教成功')
-
+			time.sleep(120)
 			
 	return '评教结束'
 	
