@@ -23,10 +23,10 @@ def teach_evaluate(usr, psw, text):
 	img = rsp.content
 	with open(local, 'wb') as f:
 		f.write(img)
-	cook = rsp.headers["Set-Cookie"][11:-8]
+	cook = rsp.headers["Set-Cookie"][11:-8] #获取cookies 从图片处获取
 	# cook = res.headers["Set-Cookie"][11:-8]
-	print(cook)
-	cap = input("验证码:")
+	# print(cook)
+	cap = input("验证码:") # 需要手动输入验证码
 	login_data = {'j_username':usr, 'j_password':psw,'j_captcha': cap, 'JSSESSIONID':cook}
 	r = s.post(login_url, login_data, headers = headers)
 	if r.status_code == 200:
@@ -37,11 +37,11 @@ def teach_evaluate(usr, psw, text):
 	
 	res = s.get(pg_url + '/search')
 
-	# r = json.loads(res.text)
-	
+	r = json.loads(res.text)
 	for item in r['data']:
 		params_post = dict()
 		get_token = dict()
+		msg = list()
 		if item['isEvaluated'] == '否' :
 			get_token['evaluatedPeople'] = item['evaluatedPeople']
 			get_token['evaluatedPeopleNumber'] = item['id']['evaluatedPeople']
@@ -52,23 +52,36 @@ def teach_evaluate(usr, psw, text):
 			
 			bsObj = BeautifulSoup(res.text, "html.parser")
 			token = bsObj.find('input', attrs = {'name' : 'tokenValue'})['value']
-		
+			
 			params_post['tokenValue'] = token
 			params_post['questionnaireCode'] = item['id']['questionnaireCoding']
 			params_post['evaluationContentNumber'] = item['id']['evaluationContentNumber']
 			params_post['evaluatedPeopleNumber'] = item['id']['evaluatedPeople']
+			params_post['count'] = str(0)
 			for item_in in bsObj.findAll('input',{'class' :'ace'}, {'type' : 'radio'}) :
 				tmpstr_in = item_in.attrs["name"]
 				if tmpstr_in not in params_post.keys():
 					params_post[tmpstr_in] = item_in.attrs["value"]
 			params_post['zgpj'] = text
-			respon = s.post(pg_url + '/evaluation', params_post, headers)
-			if 'fail' in respon.text :
-				print(get_token['evaluatedPeople'] + ' 评教失败')
-			if 'success' in respon.text :
-				print(get_token['evaluatedPeople'] +  ' 评教成功')
-			time.sleep(120)
 			
+			# print(params_post)
+			# exit(0)
+			remain = 122
+			while remain != 0 :
+				time.sleep(1)
+				print("还剩下" + str(remain) +"s可进行下一轮评教")
+				remain = remain - 1
+			respon = s.post(pg_url + '/evaluation', params_post, headers)
+			if 'success' in respon.text :
+				st = get_token['evaluatedPeople'] +  ' 评教成功'
+				print(st)
+			else :
+				st = get_token['evaluatedPeople'] + ' 评教失败'
+				print(st)
+			msg.append(st)
+			
+	for x in range(0, len(msg)) :
+		print(msg[x])
 	return '评教结束'
 	
 usr = input("学号:")
