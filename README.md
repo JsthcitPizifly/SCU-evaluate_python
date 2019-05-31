@@ -14,3 +14,5 @@ Use this for yourself, DO NOT spread it and NOT for bussiness.
 
 教务处加了后端验证码校验，main.py文件位置会生成一个now.jpg的文件
 需要手动输入验证码
+
+**每次在访问评教页面的时候，会向服务器发送请求，服务器就会重置计时，所以每次都需要先等待两分钟。**
