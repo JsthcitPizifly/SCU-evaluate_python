@@ -73,12 +73,11 @@ def teach_evaluate(usr, psw, text):
 				remain = remain - 1
 			respon = s.post(pg_url + '/evaluation', params_post, headers)
 			if 'success' in respon.text :
-				st = get_token['evaluatedPeople'] +  ' 评教成功'
-				print(st)
+				st = get_token['evaluatedPeople'] + ' 评教成功'
+				msg.append(st)
 			else :
 				st = get_token['evaluatedPeople'] + ' 评教失败'
-				print(st)
-			msg.append(st)
+				msg.append(st)
 			
 	for x in range(0, len(msg)) :
 		print(msg[x])
