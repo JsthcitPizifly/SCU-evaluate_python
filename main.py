@@ -15,8 +15,8 @@ url = 'http://zhjw.scu.edu.cn/login'
 img_url = 'http://zhjw.scu.edu.cn/img/captcha.jpg'
 login_url = 'http://zhjw.scu.edu.cn/j_spring_security_check'
 local = 'now.jpg'
+msg = list()
 def teach_evaluate(usr, psw, text):
-	
 	s = requests.Session()
  	# res = requests.get(url)
 	rsp = s.get(img_url)
@@ -38,11 +38,13 @@ def teach_evaluate(usr, psw, text):
 	res = s.get(pg_url + '/search')
 
 	r = json.loads(res.text)
+	notFinishedNum = r['notFinishedNum']
+	print('当前还有' + str(notFinishedNum) + '门课程需要评估')
 	for item in r['data']:
 		params_post = dict()
 		get_token = dict()
-		msg = list()
 		if item['isEvaluated'] == '否' :
+			evaluationContent = item['evaluationContent']
 			get_token['evaluatedPeople'] = item['evaluatedPeople']
 			get_token['evaluatedPeopleNumber'] = item['id']['evaluatedPeople']
 			get_token['questionnaireCode'] = item['id']['questionnaireCoding']
@@ -69,14 +71,14 @@ def teach_evaluate(usr, psw, text):
 			remain = 122
 			while remain != 0 :
 				time.sleep(1)
-				print("还剩下" + str(remain) +"s可进行下一轮评教")
+				print("还剩下 " + str(remain) +"s 进行下一轮评教")
 				remain = remain - 1
 			respon = s.post(pg_url + '/evaluation', params_post, headers)
 			if 'success' in respon.text :
-				st = get_token['evaluatedPeople'] + ' 评教成功'
+				st = evaluationContent + ' ' + get_token['evaluatedPeople'] + ' 评教成功'
 				msg.append(st)
 			else :
-				st = get_token['evaluatedPeople'] + ' 评教失败'
+				st = evaluationContent + ' ' + get_token['evaluatedPeople'] + ' 评教失败'
 				msg.append(st)
 			
 	for x in range(0, len(msg)) :
