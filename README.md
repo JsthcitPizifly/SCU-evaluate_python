@@ -16,3 +16,5 @@ Use this for yourself, DO NOT spread it and NOT for bussiness.
 需要手动输入验证码
 
 **每次在访问评教页面的时候，会向服务器发送请求，服务器就会重置计时，所以每次都需要先等待两分钟。**
+
+**上传了验证码的图片集，望大佬能训练一下QAQ**
